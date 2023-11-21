@@ -1,0 +1,17 @@
+export default {
+    DARK: "#121212",
+    DARK2: "#0F2027",
+    WHITISH: "#EDEDED",
+    WHITISH2: "#F7F7F7",
+    DARK_GRAY: "#757575",
+    TEAL: "#008080",
+    BLUE: "#007AFF",
+    NIGHT_GREEN: "#03DAC6",
+    NIGHT_RED: "#CF6679",
+    NIGHT_PURPLE: "#BB86FC",
+    NIGHT_PINK: "#C51F5D",
+    NIGHT_YELLOW: "#FEC260",
+    NIGHT_ORANGE: "#FF5722",
+    NIGHT_BLUE: "#22267B",
+    NIGHT_INDIGO: "#3700B3"
+}
