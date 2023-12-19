@@ -1,8 +1,11 @@
 import React, {useState} from "react";
-import {ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TextInput} from "react-native-paper";
 import Colors from "../../utils/Colors";
 import {useNavigation} from "@react-navigation/core";
+import axios from "axios/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {BASE_API_URL} from "../../utils/Constants";
 
 const LoginScreen = () => {
 
@@ -10,6 +13,36 @@ const LoginScreen = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
+
+    const handleSignIn = async () => {
+        if (email.trim() === "" || password.trim() === "") {
+            Alert.alert("Input is empty", "Please enter correct details!")
+        } else if (password.trim().length < 8) {
+            Alert.alert("Invalid password", "Password must be atleast 8 characters!")
+        } else {
+            setLoading(true)
+            try {
+                const requestBody = {
+                    email: email.trim(),
+                    password: password.trim()
+                }
+                await axios.post(`http://${BASE_API_URL}:8008/api/user/login`, requestBody)
+                    .then(async (response) => {
+                        await AsyncStorage.setItem('user', JSON.stringify(response.data.user))
+                        navigation.reset({
+                            index: 0,
+                            routes: [{name: 'MainRoute'}]
+                        })
+                    })
+                    .catch((e) => console.error("error: ", e.response))
+            } catch (e) {
+                console.error("Register error: ", e)
+                Alert.alert("Error!", "Cannot sign up")
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
 
     return (
         <ScrollView
@@ -59,7 +92,7 @@ const LoginScreen = () => {
                 <TouchableOpacity
                     style={styles.buttonSubmit}
                     disabled={loading}
-                    //onPress={() => register()}
+                    onPress={() => handleSignIn()}
                 >
                     {loading ?
                         <ActivityIndicator color={'white'}/>

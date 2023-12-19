@@ -3,6 +3,7 @@ import StartScreen from "../screens/authentication/StartScreen";
 import RegisterScreen from "../screens/authentication/RegisterScreen";
 import Colors from "../utils/Colors";
 import LoginScreen from "../screens/authentication/LoginScreen";
+import MainRoute from "./MainRoute";
 
 const Stack = createStackNavigator()
 
@@ -22,6 +23,11 @@ function AuthRoute() {
             <Stack.Screen
                 name="LoginScreen"
                 component={LoginScreen}
+                options={{headerTitle: "", headerBackTitleVisible: false, headerTintColor: Colors.TEAL}}
+            />
+            <Stack.Screen
+                name={"MainRoute"}
+                component={MainRoute}
                 options={{headerTitle: "", headerBackTitleVisible: false, headerTintColor: Colors.TEAL}}
             />
         </Stack.Navigator>

@@ -1,9 +1,12 @@
 import React, {useState} from "react";
-import {ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TextInput} from "react-native-paper";
 import Colors from "../../utils/Colors";
 import {ParamListBase, useNavigation} from "@react-navigation/core";
 import {StackNavigationProp} from "@react-navigation/stack";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {BASE_API_URL} from "../../utils/Constants";
 
 const RegisterScreen = () => {
 
@@ -13,6 +16,39 @@ const RegisterScreen = () => {
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
     const [loading, setLoading] = useState(false)
+
+    const handleSignUp = async () => {
+        if (name.trim() === "" || email.trim() === "" || password.trim() === "" || confirmPassword.trim() === "") {
+            Alert.alert("Input is empty", "Please enter correct details!")
+        } else if (password.trim().length < 8 || confirmPassword.trim().length < 8) {
+            Alert.alert("Invalid password", "Password must be atleast 8 characters!")
+        } else if (password.trim() !== confirmPassword.trim()) {
+            Alert.alert("Passwords don't match")
+        } else {
+            setLoading(true)
+            try {
+                const requestBody = {
+                    email: email.trim(),
+                    name: name.trim(),
+                    password: password.trim()
+                }
+                await axios.post(`http://${BASE_API_URL}:8008/api/user/register`, requestBody)
+                    .then(async (response) => {
+                        await AsyncStorage.setItem('user', JSON.stringify(response.data.user))
+                        navigation.reset({
+                            index: 0,
+                            routes: [{name: 'MainRoute'}]
+                        })
+                    })
+                    .catch((e) => console.error(e))
+            } catch (e) {
+                console.error("Register error: ", e)
+                Alert.alert("Error!", "Cannot sign up")
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
 
     return (
         <ScrollView
@@ -91,7 +127,7 @@ const RegisterScreen = () => {
                 <TouchableOpacity
                     style={styles.buttonSubmit}
                     disabled={loading}
-                    //onPress={() => register()}
+                    onPress={() => handleSignUp()}
                 >
                     {loading ?
                         <ActivityIndicator color={'white'}/>
