@@ -6,8 +6,11 @@ import {useNavigation} from "@react-navigation/core";
 import axios from "axios/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {BASE_API_URL} from "../../utils/Constants";
+import {useCurrentUserStore} from "../../store";
 
 const LoginScreen = () => {
+
+    const {currentUser, setCurrentUser} = useCurrentUserStore()
 
     const navigation = useNavigation()
     const [email, setEmail] = useState("")
@@ -29,6 +32,7 @@ const LoginScreen = () => {
                 await axios.post(`http://${BASE_API_URL}:8008/api/user/login`, requestBody)
                     .then(async (response) => {
                         await AsyncStorage.setItem('user', JSON.stringify(response.data.user))
+                        setCurrentUser(response.data.user)
                         navigation.reset({
                             index: 0,
                             routes: [{name: 'MainRoute'}]

@@ -45,7 +45,7 @@ const ProfileView = () => {
     }
 
     return (
-        <SafeAreaView style={{display: 'flex', flex: 1}}>
+        <SafeAreaView style={{display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center'}}>
             <TouchableOpacity style={{backgroundColor: 'red'}} onPress={() => logoutAlert()}>
                 <Text>Logout</Text>
             </TouchableOpacity>

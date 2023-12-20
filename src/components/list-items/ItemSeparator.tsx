@@ -1,10 +1,15 @@
 import React from "react";
-import {View} from "react-native";
+import {StyleSheet, View} from "react-native";
 import Colors from "../../utils/Colors";
 
 const ItemSeparator = () => {
     return (
-        <View style={{backgroundColor: Colors.DARK_GRAY, height: 1}} />
+        <View style={{
+            backgroundColor: Colors.DARK_GRAY,
+            height: StyleSheet.hairlineWidth,
+            marginLeft: '16%',
+            marginRight: '4%'
+        }}/>
     )
 }
 

@@ -16,7 +16,7 @@ export const GroupDetailsRoute = () => {
                 options={{title: "Members"}}
             />
             <TopTabs.Screen
-                name="OngoingContestsView"
+                name="GroupTransactions"
                 component={GroupTransactions}
                 initialParams={route.params}
                 options={{title: "Pending Payments"}}

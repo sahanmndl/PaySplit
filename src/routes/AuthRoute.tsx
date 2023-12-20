@@ -4,12 +4,14 @@ import RegisterScreen from "../screens/authentication/RegisterScreen";
 import Colors from "../utils/Colors";
 import LoginScreen from "../screens/authentication/LoginScreen";
 import MainRoute from "./MainRoute";
+import {Platform} from "react-native";
 
 const Stack = createStackNavigator()
 
 function AuthRoute() {
     return (
-        <Stack.Navigator initialRouteName="StartScreen">
+        <Stack.Navigator initialRouteName="StartScreen"
+                         screenOptions={{presentation: Platform.OS === 'ios' ? 'modal' : 'card'}}>
             <Stack.Screen
                 name="StartScreen"
                 component={StartScreen}

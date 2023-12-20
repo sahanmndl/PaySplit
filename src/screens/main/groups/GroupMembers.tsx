@@ -1,34 +1,28 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useIsFocused, useRoute} from "@react-navigation/core";
+import React, {useEffect, useState} from "react";
+import {FlatList, SafeAreaView, StyleSheet, TouchableOpacity} from "react-native";
+import {useIsFocused, useNavigation, useRoute} from "@react-navigation/core";
 import axios from "axios";
 import {BASE_API_URL} from "../../../utils/Constants";
 import ItemSeparator from "../../../components/list-items/ItemSeparator";
 import MemberItem from "../../../components/list-items/MemberItem";
 import Colors from "../../../utils/Colors";
 import {Feather} from "@expo/vector-icons";
-import BottomSheet, {BottomSheetFlatList, BottomSheetView} from "@gorhom/bottom-sheet";
-import TextButton from "../../../components/buttons/TextButton";
-import SelectMemberItem from "../../../components/list-items/SelectMemberItem";
-import {useSelectedMembersStore} from "../../../store";
+import {useCurrentUserStore} from "../../../store";
 
 const GroupMembers = () => {
 
+    let {currentUser} = useCurrentUserStore()
+    currentUser = JSON.parse(currentUser)
+
+    console.log("current: ", currentUser._id, typeof (currentUser))
+
     const route = useRoute()
     const focused = useIsFocused()
+    const navigation = useNavigation()
     const [loading, setLoading] = useState(false)
     const [members, setMembers] = useState([])
 
     const {groupId} = route.params
-    const bottomSheetRef = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['25%', '50%', '90%'], [])
-
-    const selectedMembers = useSelectedMembersStore((state) => state.selectedMembers);
-    const toggleSelectedMember = useSelectedMembersStore((state) => state.toggleSelectedMember);
-
-    const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
-    }, []);
 
     const fetchUserDetails = async (userId: String) => {
         try {
@@ -36,7 +30,6 @@ const GroupMembers = () => {
             return response.data.user
         } catch (e) {
             console.error(e)
-            return null
         }
     }
 
@@ -63,14 +56,7 @@ const GroupMembers = () => {
         focused && fetchGroupMembers()
     }, [focused])
 
-    const renderItem = useCallback(
-        ({item}) => (
-            <SelectMemberItem item={item}/>
-        ),
-        []
-    );
-
-    console.log(selectedMembers)
+    const filteredMembers = members.filter((member) => member._id !== currentUser._id)
 
     return (
         <SafeAreaView style={{display: 'flex', flex: 1}}>
@@ -90,40 +76,15 @@ const GroupMembers = () => {
             />
             <TouchableOpacity
                 style={styles.fab}
-                onPress={() => bottomSheetRef.current.snapToIndex(1)}
+                onPress={() => requestAnimationFrame(() => {
+                    navigation.navigate('TransactionRoute', {
+                        allMembers: filteredMembers,
+                        groupId: groupId
+                    })
+                })}
             >
                 <Feather name='plus' size={26} color='#FFF'/>
             </TouchableOpacity>
-            <BottomSheet
-                backgroundStyle={{backgroundColor: Colors.DARK}}
-                handleIndicatorStyle={{backgroundColor: 'white'}}
-                ref={bottomSheetRef}
-                index={-1}
-                snapPoints={snapPoints}
-                onChange={handleSheetChanges}
-                enablePanDownToClose={true}
-            >
-                <BottomSheetView style={{display: 'flex', flex: 1, padding: 10}}>
-                    <View style={{
-                        display: 'flex',
-                        flex: 0.1,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                    }}>
-                        <Text style={{fontSize: 24, fontWeight: '700', color: 'white'}}>
-                            Select Members
-                        </Text>
-                        <TextButton btnText={"NEXT →"} handleFunction={() => console.log("nexxt: ", selectedMembers)} isDisabled={false}/>
-                    </View>
-                    <BottomSheetFlatList
-                        style={{display: 'flex', flex: 0.9}}
-                        data={members}
-                        keyExtractor={(i) => i}
-                        renderItem={renderItem}
-                    />
-                </BottomSheetView>
-            </BottomSheet>
         </SafeAreaView>
     )
 }

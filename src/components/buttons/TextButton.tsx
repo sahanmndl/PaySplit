@@ -4,8 +4,13 @@ import Colors from "../../utils/Colors";
 
 const TextButton = ({btnText, handleFunction, isDisabled}) => {
     return (
-        <TouchableOpacity onPress={handleFunction}>
-            <Text style={{marginStart: 4, color: isDisabled ? Colors.DARK_GRAY : Colors.BLUE, fontWeight: '700'}}>
+        <TouchableOpacity disabled={isDisabled} onPress={handleFunction}>
+            <Text style={{
+                marginStart: 4,
+                color: isDisabled ? Colors.DARK_GRAY : Colors.BLUE,
+                fontWeight: '500',
+                fontSize: 18
+            }}>
                 {btnText}
             </Text>
         </TouchableOpacity>

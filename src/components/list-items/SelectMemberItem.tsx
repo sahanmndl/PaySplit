@@ -2,33 +2,29 @@ import React, {useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import UserAvatar from 'react-native-user-avatar';
 import {Checkbox} from "expo-checkbox";
-import {useSelectedMembersStore} from "../../store";
 
-let selectedMembers = [];
-let temp = []
+const SelectMemberItem = ({item, selectedMembers, setSelectedMembers}) => {
 
-const SelectMemberItem = ({item}) => {
+    const [checked, setChecked] = useState(false)
 
-    //const [checked, setChecked] = useState(false)
-    const isChecked = useSelectedMembersStore((state) => state.selectedMembers.includes(item));
-    const toggleSelectedMember = useSelectedMembersStore((state) => state.toggleSelectedMember);
+    const handleCheckboxChange = () => {
+        let updatedMembers: any[];
 
-    // const handleCheckboxChange = () => {
-    //     if (!checked) {
-    //         selectedMembers.push(item)
-    //     } else {
-    //         temp = selectedMembers.filter((member) => member._id !== item._id)
-    //         selectedMembers = temp
-    //         temp = []
-    //     }
-    //     setChecked(!checked)
-    // }
+        if (!checked) {
+            updatedMembers = [...selectedMembers, item];
+        } else {
+            updatedMembers = selectedMembers.filter((member) => member._id !== item._id);
+        }
+
+        setSelectedMembers(updatedMembers);
+        setChecked(!checked);
+    }
 
     return (
         <TouchableOpacity style={{borderRadius: 8, elevation: 4, minHeight: 75}}>
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                 <View style={{flex: 0.15, alignItems: 'center', justifyContent: 'center'}}>
-                    <UserAvatar size={48} name={item.name} bgColors={['#ffffff', '#606060', '#ef78b4']}/>
+                    <UserAvatar size={45} name={item.name} bgColors={['#ffffff', '#606060', '#ef78b4']}/>
                 </View>
                 <View style={{
                     display: 'flex',
@@ -49,8 +45,11 @@ const SelectMemberItem = ({item}) => {
                     alignItems: 'center',
                     justifyContent: 'flex-start'
                 }}>
-                    <Checkbox style={{borderRadius: 100, height: 24, width: 24}} value={isChecked}
-                              onValueChange={() => toggleSelectedMember(item)}/>
+                    <Checkbox
+                        style={{borderRadius: 100, height: 22, width: 22}}
+                        value={checked}
+                        onValueChange={handleCheckboxChange}
+                    />
                 </View>
             </View>
         </TouchableOpacity>
