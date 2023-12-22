@@ -1,16 +1,18 @@
 # PaySplit
 A React Native mobile application for friends and roommates to track bills and other shared expenses, so that everyone gets paid back.
 
-## Base Dependencies
-- [axios](https://axios-http.com/docs/intro) for networking
-- [react-navigation](https://reactnavigation.org/) for bottom and stack navigation
-- [react-native-paper](https://reactnativepaper.com/) for UI components
-- [react-native-picker](https://www.npmjs.com/package/@react-native-picker/picker) to pick categories
-- [react-native-vector-icons](https://github.com/oblador/react-native-vector-icons) for icons
-- [react-native-async-storage](https://react-native-async-storage.github.io/async-storage/docs/usage/) to store userId for auto login
-- [expo-linear-gradient](https://docs.expo.dev/versions/latest/sdk/linear-gradient/) to add color gradient
-- [lottie-react-native](https://www.npmjs.com/package/lottie-react-native) to add animations
-- [react-native-chart-kit](https://www.npmjs.com/package/react-native-chart-kit) and [victory-native](https://formidable.com/open-source/victory/docs/native/) for charts and graphs
+## Tech Stack
+
+<p align = "center">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/f5f04e6d-b710-4710-a09c-083875dcae27" width="100">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/50521066-d235-40ba-932c-cce2aea89759" width="100">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/0391a093-50ec-4ccf-ab18-95aca8f0508c" width="100">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/903ea17a-5817-4c5a-8cc2-05aa1b9a035c" width="100">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/2c72db9c-19e4-497f-ac72-ae31719ed1e6" width="100">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/5946ccbf-b191-4b78-bd94-3ac9340affd7" width="100">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/1ee1ff84-87a0-4bf2-bb7f-0050b6885f4a" width="100">
+  <img src="https://github.com/sahanmndl/PaySplit/assets/76529959/f67ec7de-be70-4295-bd7b-d901b259de0d" width="100">
+</p>
 
 ## Setup
 
