@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {FlatList, SafeAreaView, StyleSheet, TouchableOpacity} from "react-native";
+import {ActivityIndicator, SafeAreaView, StyleSheet, TouchableOpacity} from "react-native";
 import {useIsFocused, useNavigation, useRoute} from "@react-navigation/core";
 import axios from "axios";
 import {BASE_API_URL} from "../../../utils/Constants";
@@ -8,11 +8,12 @@ import MemberItem from "../../../components/list-items/MemberItem";
 import Colors from "../../../utils/Colors";
 import {Feather} from "@expo/vector-icons";
 import {useCurrentUserStore} from "../../../store";
+import {FlashList} from "@shopify/flash-list";
 
 const GroupMembers = () => {
 
     let {currentUser} = useCurrentUserStore()
-    currentUser = JSON.parse(currentUser)
+    //currentUser = JSON.parse(currentUser)
 
     console.log("current: ", currentUser._id, typeof (currentUser))
 
@@ -20,6 +21,7 @@ const GroupMembers = () => {
     const focused = useIsFocused()
     const navigation = useNavigation()
     const [loading, setLoading] = useState(false)
+    const [refresh, setRefresh] = useState(false)
     const [members, setMembers] = useState([])
 
     const {groupId} = route.params
@@ -48,8 +50,14 @@ const GroupMembers = () => {
         } catch (e) {
             console.error(e)
         } finally {
+            setRefresh(false)
             setLoading(false)
         }
+    }
+
+    const onRefresh = () => {
+        setRefresh(true)
+        fetchGroupMembers()
     }
 
     useEffect(() => {
@@ -60,20 +68,24 @@ const GroupMembers = () => {
 
     return (
         <SafeAreaView style={{display: 'flex', flex: 1}}>
-            <FlatList
-                data={members}
-                keyExtractor={({_id}) => _id}
-                // refreshing={refresh}
-                // onRefresh={onRefresh}
-                showsVerticalScrollIndicator={false}
-                //ListEmptyComponent={NoResults}
-                ItemSeparatorComponent={ItemSeparator}
-                initialNumToRender={20}
-                removeClippedSubviews={false}
-                renderItem={({item}) => (
-                    <MemberItem item={item}/>
-                )}
-            />
+            {loading ? (
+                <ActivityIndicator style={{marginTop: 20}} size={'small'} color={Colors.NIGHT_GREEN}/>
+            ) : (
+                <FlashList
+                    data={members}
+                    keyExtractor={({_id}) => _id}
+                    estimatedItemSize={75}
+                    refreshing={refresh}
+                    onRefresh={onRefresh}
+                    showsVerticalScrollIndicator={false}
+                    //ListEmptyComponent={NoResults}
+                    ItemSeparatorComponent={ItemSeparator}
+                    removeClippedSubviews={false}
+                    renderItem={({item}) => (
+                        <MemberItem item={item}/>
+                    )}
+                />
+            )}
             <TouchableOpacity
                 style={styles.fab}
                 onPress={() => requestAnimationFrame(() => {

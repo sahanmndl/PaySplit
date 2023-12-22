@@ -74,12 +74,10 @@ const SelectMembersView = () => {
                 style={{flex: 0.75}}
                 data={allMembers}
                 keyExtractor={({_id}) => _id}
-                // refreshing={refresh}
-                // onRefresh={onRefresh}
                 showsVerticalScrollIndicator={false}
                 //ListEmptyComponent={NoResults}
                 ItemSeparatorComponent={ItemSeparator}
-                initialNumToRender={20}
+                initialNumToRender={75}
                 removeClippedSubviews={false}
                 renderItem={({item}) => (
                     <SelectMemberItem

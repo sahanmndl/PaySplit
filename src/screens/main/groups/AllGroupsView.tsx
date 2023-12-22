@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {FlatList, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import GroupItem from "../../../components/list-items/GroupItem";
@@ -8,11 +8,14 @@ import ItemSeparator from "../../../components/list-items/ItemSeparator";
 import {Entypo} from "@expo/vector-icons";
 import {ParamListBase, useIsFocused, useNavigation} from "@react-navigation/core";
 import {StackNavigationProp} from "@react-navigation/stack";
+import {FlashList} from "@shopify/flash-list";
+import Colors from "../../../utils/Colors";
 
 const AllGroupsView = () => {
 
     const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
     const focused = useIsFocused()
+    const [refresh, setRefresh] = useState(false)
     const [loading, setLoading] = useState(true)
     const [groups, setGroups] = useState([])
 
@@ -43,7 +46,13 @@ const AllGroupsView = () => {
             console.error(e)
         } finally {
             setLoading(false)
+            setRefresh(false)
         }
+    }
+
+    const onRefresh = () => {
+        setRefresh(true)
+        fetchAllGroups()
     }
 
     useEffect(() => {
@@ -59,28 +68,32 @@ const AllGroupsView = () => {
                 alignItems: 'center',
                 paddingHorizontal: 14
             }}>
-                <Text style={{fontSize: 36, fontWeight: '700', color: 'white'}}>
+                <Text style={{fontSize: 28, fontWeight: '700', color: 'white'}}>
                     Groups
                 </Text>
                 <TouchableOpacity onPress={() => navigation.navigate('CreateJoinGroupView')}>
-                    <Entypo name="dots-three-horizontal" size={24} color="white"/>
+                    <Entypo name="dots-three-horizontal" size={20} color="white"/>
                 </TouchableOpacity>
             </View>
             <View style={{flex: 0.9, paddingHorizontal: 14, marginTop: 10}}>
-                <FlatList
-                    data={groups}
-                    keyExtractor={({_id}) => _id}
-                    // refreshing={refresh}
-                    // onRefresh={onRefresh}
-                    showsVerticalScrollIndicator={false}
-                    //ListEmptyComponent={NoResults}
-                    ItemSeparatorComponent={ItemSeparator}
-                    initialNumToRender={20}
-                    removeClippedSubviews={false}
-                    renderItem={({item}) => (
-                        <GroupItem item={item}/>
-                    )}
-                />
+                {loading ? (
+                    <ActivityIndicator size={'small'} color={Colors.NIGHT_GREEN}/>
+                ) : (
+                    <FlashList
+                        data={groups}
+                        estimatedItemSize={75}
+                        keyExtractor={({_id}) => _id}
+                        refreshing={refresh}
+                        onRefresh={onRefresh}
+                        showsVerticalScrollIndicator={false}
+                        //ListEmptyComponent={NoResults}
+                        ItemSeparatorComponent={ItemSeparator}
+                        removeClippedSubviews={false}
+                        renderItem={({item}) => (
+                            <GroupItem item={item}/>
+                        )}
+                    />
+                )}
             </View>
         </SafeAreaView>
     )

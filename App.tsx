@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainRoute from "./src/routes/MainRoute";
 import {PaperProvider} from "react-native-paper";
 import {useCurrentUserStore} from "./src/store";
+import ToastManager from "toastify-react-native";
 
 export default function App() {
 
@@ -31,6 +32,7 @@ export default function App() {
 
     return (
         <PaperProvider theme={DarkTheme}>
+            <ToastManager height={50} />
             <NavigationContainer theme={DarkTheme}>
                 <StatusBar style={'light'}/>
                 {user ? <MainRoute/> : <AuthRoute/>}

@@ -12,8 +12,8 @@ const TransactionMemberItem = ({item, participants, setParticipants}) => {
         setAmount(amount);
         setParticipants((prevParticipants) =>
             prevParticipants.map((participant) =>
-                participant.user === item._id
-                    ? { ...participant, amount: parseFloat(amount) }
+                participant.userId === item._id
+                    ? {...participant, amount: parseFloat(amount)}
                     : participant
             )
         )

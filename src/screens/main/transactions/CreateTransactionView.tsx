@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Alert, FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import {useNavigation, useRoute} from "@react-navigation/core";
 import ItemSeparator from "../../../components/list-items/ItemSeparator";
@@ -11,11 +11,12 @@ import {TextInput} from "react-native-paper";
 import {useCurrentUserStore} from "../../../store";
 import axios from "axios";
 import {BASE_API_URL} from "../../../utils/Constants";
+import {Toast} from "toastify-react-native";
 
 const CreateTransactionView = () => {
 
     let {currentUser} = useCurrentUserStore()
-    currentUser = JSON.parse(currentUser)
+    //currentUser = JSON.parse(currentUser)
 
     const insets = useSafeAreaInsets()
     const route = useRoute()
@@ -35,12 +36,14 @@ const CreateTransactionView = () => {
     const [loading, setLoading] = useState(false)
 
     const createTransaction = async () => {
-        console.log(participants, totalAmount)
+        let sum = 0.0
+        participants.map((p) => sum += p.amount)
+
         if (title.trim() === "") {
             Alert.alert("Error!", "Please enter name of the bill")
         } else if (participants.some((participant) => participant.amount < 0)) {
             Alert.alert("Error!", "Please enter correct amount")
-        } else if (participants.reduce((sum, participant) => sum + participant.amount, 0) > totalAmount) {
+        } else if (sum > totalAmount) {
             Alert.alert("Error!", "Sum of participant amounts cannot be greater than total amount");
         } else {
             try {
@@ -54,10 +57,18 @@ const CreateTransactionView = () => {
                 }
                 console.log(requestBody)
                 await axios.post(`http://${BASE_API_URL}:8008/api/group/createTransaction`, requestBody)
-                    .then((response) => console.log("SUCCESS CREATE TRANSACTION: ", response.data))
-                    .catch((e) => console.error("ERROR CREATE TRANSACTION: ", e.response.message))
+                    .then((response) => {
+                        console.log("SUCCESS CREATE TRANSACTION: ", response.data)
+                        Toast.success("New bill created")
+                        navigation.goBack()
+                    })
+                    .catch((e) => {
+                        console.error("ERROR CREATE TRANSACTION: ", e.response.message)
+                        Alert.alert("Error!", "Couldn't process query! Please try again");
+                    })
             } catch (e) {
                 console.error("ERROR CREATE TRANSACTION: ", e.message)
+                Alert.alert("Error!", "Couldn't process query! Please try again");
             } finally {
                 setLoading(false)
             }
@@ -86,11 +97,15 @@ const CreateTransactionView = () => {
                     justifyContent: 'center',
                     flex: 0.2
                 }}>
-                    <TextButton
-                        btnText={"Save"}
-                        isDisabled={false}
-                        handleFunction={() => createTransaction()}
-                    />
+                    {loading ? (
+                        <ActivityIndicator size={'small'} color={Colors.BLUE}/>
+                    ) : (
+                        <TextButton
+                            btnText={"Save"}
+                            isDisabled={title.trim() === ""}
+                            handleFunction={() => createTransaction()}
+                        />
+                    )}
                 </View>
             </View>
             <View style={{
@@ -130,8 +145,6 @@ const CreateTransactionView = () => {
                 style={{flex: 0.8}}
                 data={selectedMembers}
                 keyExtractor={({_id}) => _id}
-                // refreshing={refresh}
-                // onRefresh={onRefresh}
                 showsVerticalScrollIndicator={false}
                 //ListEmptyComponent={NoResults}
                 ItemSeparatorComponent={ItemSeparator}
