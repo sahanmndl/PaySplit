@@ -16,7 +16,6 @@ import {Toast} from "toastify-react-native";
 const CreateTransactionView = () => {
 
     let {currentUser} = useCurrentUserStore()
-    //currentUser = JSON.parse(currentUser)
 
     const insets = useSafeAreaInsets()
     const route = useRoute()

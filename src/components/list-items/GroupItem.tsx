@@ -5,8 +5,9 @@ import Colors from "../../utils/Colors";
 import {useNavigation} from "@react-navigation/core";
 
 const GroupItem = ({item}) => {
+
     const navigation = useNavigation()
-    console.log("Press: ", item._id)
+
     return (
         <TouchableOpacity
             style={{borderRadius: 8, elevation: 4, minHeight: 75}}
