@@ -13,9 +13,6 @@ import {FlashList} from "@shopify/flash-list";
 const GroupMembers = () => {
 
     let {currentUser} = useCurrentUserStore()
-    //currentUser = JSON.parse(currentUser)
-
-    console.log("current: ", currentUser._id, typeof (currentUser))
 
     const route = useRoute()
     const focused = useIsFocused()

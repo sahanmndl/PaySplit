@@ -18,7 +18,7 @@ export default function App() {
 
     const fetchCurrentUser = async () => {
         try {
-            const user = await AsyncStorage.getItem('user')
+            const user = JSON.parse(await AsyncStorage.getItem('user'))
             setUser(user)
             setCurrentUser(user)
         } catch (e) {
@@ -32,7 +32,7 @@ export default function App() {
 
     return (
         <PaperProvider theme={DarkTheme}>
-            <ToastManager height={50} />
+            <ToastManager height={50}/>
             <NavigationContainer theme={DarkTheme}>
                 <StatusBar style={'light'}/>
                 {user ? <MainRoute/> : <AuthRoute/>}
