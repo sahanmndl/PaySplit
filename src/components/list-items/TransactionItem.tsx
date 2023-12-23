@@ -3,11 +3,19 @@ import {Text, TouchableOpacity, View} from "react-native";
 import Colors from "../../utils/Colors";
 import axios from "axios";
 import {BASE_API_URL} from "../../utils/Constants";
+import ViewMoreText from 'react-native-view-more-text';
+import {useCurrentUserStore} from "../../store";
 
 const TransactionItem = ({item}) => {
 
+    const {currentUser} = useCurrentUserStore()
+
     const [participantNames, setParticipantNames] = useState([])
+    const [userIsParticipant, setUserIsParticipant] = useState(false)
     const [creator, setCreator] = useState(null)
+
+    const renderViewMore = (onPress) => <Text style={{color: Colors.BLUE}} onPress={onPress}>View more</Text>;
+    const renderViewLess = (onPress) => <Text style={{color: Colors.BLUE}} onPress={onPress}>View less</Text>;
 
     const fetchUserDetails = async (userId: String) => {
         try {
@@ -29,7 +37,10 @@ const TransactionItem = ({item}) => {
             return user ? user.name : 'Unknown User'
         })
         const participantNames = await Promise.all(participantDetailsPromises)
-        setParticipantNames(participantNames);
+        setParticipantNames(participantNames)
+
+        const isParticipant = item.participants.some((p) => p.userId === currentUser._id)
+        setUserIsParticipant(isParticipant)
     }
 
     useEffect(() => {
@@ -47,15 +58,71 @@ const TransactionItem = ({item}) => {
             display: 'flex',
             padding: 12
         }}>
-            <View
-                style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: 20, fontWeight: '700', color: 'white'}}>
-                    {item.title}
+            {item && creator ? (
+                <>
+                    <View
+                        style={{
+                            display: 'flex',
+                            flex: 1,
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                        <Text style={{fontSize: 20, fontWeight: '700', color: 'white', display: 'flex', flex: 0.75}}
+                              numberOfLines={3}>
+                            {item.title}
+                        </Text>
+                        <Text style={{
+                            fontSize: 18,
+                            fontWeight: '500',
+                            color: 'white',
+                            display: 'flex',
+                            flex: 0.25,
+                            textAlign: 'right'
+                        }}>
+                            ₹ {item.totalAmount}
+                        </Text>
+                    </View>
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginVertical: 10}}>
+                        <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>
+                            Created by{" "}
+                        </Text>
+                        <Text style={{
+                            fontWeight: currentUser._id === item.creatorId ? '500' : '400',
+                            color: currentUser._id === item.creatorId ? Colors.NIGHT_GREEN : 'white',
+                            fontSize: 15
+                        }}>
+                            {currentUser._id === item.creatorId ? 'you' : creator.name}{" "}
+                        </Text>
+                        <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>
+                            on{" "}
+                        </Text>
+                        <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>
+                            {new Date(item.createdAt).toDateString()}
+                        </Text>
+                    </View>
+                    <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>
+                        Bill split among:
+                    </Text>
+                    <ViewMoreText
+                        numberOfLines={3}
+                        renderViewMore={renderViewMore}
+                        renderViewLess={renderViewLess}
+                    >
+                        <Text style={{fontWeight: '400', color: 'white', fontSize: 15}}>
+                            {participantNames.join(', ')}
+                        </Text>
+                    </ViewMoreText>
+                    {userIsParticipant ? (
+                        <Text style={{fontWeight: '400', color: Colors.NIGHT_GREEN, fontSize: 15, marginTop: 14}}>
+                            You are included in this bill
+                        </Text>
+                    ) : null}
+                </>
+            ) : (
+                <Text style={{fontSize: 15, fontWeight: '500', color: Colors.BLUE}}>
+                    Loading...
                 </Text>
-                <Text style={{fontSize: 18, fontWeight: '500', color: 'white'}}>
-                    ₹ {item.totalAmount}
-                </Text>
-            </View>
+            )}
         </TouchableOpacity>
     )
 }
