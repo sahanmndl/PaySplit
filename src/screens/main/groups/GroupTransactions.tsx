@@ -6,7 +6,6 @@ import {BASE_API_URL} from "../../../utils/Constants";
 import {useCurrentUserStore} from "../../../store";
 import Colors from "../../../utils/Colors";
 import {FlashList} from "@shopify/flash-list";
-import ItemSeparator from "../../../components/list-items/ItemSeparator";
 import TransactionItem from "../../../components/list-items/TransactionItem";
 
 const GroupTransactions = () => {

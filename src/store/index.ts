@@ -1,6 +1,9 @@
-import {create} from "zustand";
+import create from 'zustand';
+import {produce} from 'immer';
 
 export const useCurrentUserStore = create((set) => ({
     currentUser: null,
-    setCurrentUser: (user) => set({currentUser: user}),
-}));
+    setCurrentUser: (user) => set(produce((state) => {
+        state.currentUser = user;
+    }))
+}))

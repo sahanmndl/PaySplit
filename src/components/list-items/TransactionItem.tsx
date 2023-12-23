@@ -5,11 +5,13 @@ import axios from "axios";
 import {BASE_API_URL} from "../../utils/Constants";
 import ViewMoreText from 'react-native-view-more-text';
 import {useCurrentUserStore} from "../../store";
+import {useNavigation} from "@react-navigation/core";
 
 const TransactionItem = ({item}) => {
 
     const {currentUser} = useCurrentUserStore()
 
+    const navigation = useNavigation()
     const [participantNames, setParticipantNames] = useState([])
     const [userIsParticipant, setUserIsParticipant] = useState(false)
     const [creator, setCreator] = useState(null)
@@ -48,16 +50,23 @@ const TransactionItem = ({item}) => {
     }, [])
 
     return (
-        <TouchableOpacity style={{
-            width: '100%',
-            minHeight: 128,
-            backgroundColor: Colors.DARK,
-            marginBottom: 24,
-            borderRadius: 8,
-            elevation: 4,
-            display: 'flex',
-            padding: 12
-        }}>
+        <TouchableOpacity
+            style={{
+                width: '100%',
+                minHeight: 128,
+                backgroundColor: Colors.DARK,
+                marginBottom: 24,
+                borderRadius: 8,
+                elevation: 4,
+                display: 'flex',
+                padding: 12
+            }}
+            onPress={() => requestAnimationFrame(() => {
+                navigation.navigate('TransactionDetailsView', {
+                    transaction: item
+                })
+            })}
+        >
             {item && creator ? (
                 <>
                     <View
@@ -67,7 +76,7 @@ const TransactionItem = ({item}) => {
                             flexDirection: 'row',
                             alignItems: 'center'
                         }}>
-                        <Text style={{fontSize: 20, fontWeight: '700', color: 'white', display: 'flex', flex: 0.75}}
+                        <Text style={{fontSize: 18, fontWeight: '700', color: 'white', display: 'flex', flex: 0.75}}
                               numberOfLines={3}>
                             {item.title}
                         </Text>
@@ -91,7 +100,7 @@ const TransactionItem = ({item}) => {
                             color: currentUser._id === item.creatorId ? Colors.NIGHT_GREEN : 'white',
                             fontSize: 15
                         }}>
-                            {currentUser._id === item.creatorId ? 'you' : creator.name}{" "}
+                            {currentUser._id === item.creatorId ? 'You' : creator.name}{" "}
                         </Text>
                         <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>
                             on{" "}

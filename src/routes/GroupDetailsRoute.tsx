@@ -8,18 +8,18 @@ const TopTabs = createMaterialTopTabNavigator()
 export const GroupDetailsRoute = () => {
     const route = useRoute()
     return (
-        <TopTabs.Navigator initialRouteName="GroupMembers">
+        <TopTabs.Navigator initialRouteName="GroupMembers" screenOptions={{lazy: true}}>
             <TopTabs.Screen
                 name="GroupMembers"
                 component={GroupMembers}
                 initialParams={route.params}
-                options={{title: "Members"}}
+                options={{title: "Members", lazy: true}}
             />
             <TopTabs.Screen
                 name="GroupTransactions"
                 component={GroupTransactions}
                 initialParams={route.params}
-                options={{title: "Pending Payments"}}
+                options={{title: "History", lazy: true}}
             />
         </TopTabs.Navigator>
     )

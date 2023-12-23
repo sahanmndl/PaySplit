@@ -10,6 +10,7 @@ import GroupDetailsRoute from "./GroupDetailsRoute";
 import TransactionRoute from "./TransactionRoute";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {useRoute} from "@react-navigation/core";
+import TransactionDetailsView from "../screens/main/transactions/TransactionDetailsView";
 
 const BottomTabs = createBottomTabNavigator()
 const Stack = createStackNavigator()
@@ -41,6 +42,12 @@ function GroupsStack() {
                 component={TransactionRoute}
                 initialParams={route.params}
                 options={{headerShown: false, headerBackTitleVisible: false, headerTintColor: Colors.TEAL}}
+            />
+            <Stack.Screen
+                name="TransactionDetailsView"
+                component={TransactionDetailsView}
+                initialParams={route.params}
+                options={{headerTitle: "", headerBackTitleVisible: false, headerTintColor: Colors.TEAL}}
             />
         </Stack.Navigator>
     )
