@@ -4,12 +4,12 @@ import Colors from "../../utils/Colors";
 import axios from "axios";
 import {BASE_API_URL} from "../../utils/Constants";
 import ViewMoreText from 'react-native-view-more-text';
-import {useCurrentUserStore} from "../../store";
 import {useNavigation} from "@react-navigation/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TransactionItem = ({item}) => {
 
-    const {currentUser} = useCurrentUserStore()
+    const [currentUser, setCurrentUser] = useState(null)
 
     const navigation = useNavigation()
     const [participantNames, setParticipantNames] = useState([])
@@ -34,6 +34,7 @@ const TransactionItem = ({item}) => {
     }
 
     const fetchParticipantDetails = async () => {
+        setCurrentUser(JSON.parse(await AsyncStorage.getItem('user')))
         const participantDetailsPromises = item.participants.map(async (participant) => {
             const user = await fetchUserDetails(participant.userId);
             return user ? user.name : 'Unknown User'
@@ -63,11 +64,12 @@ const TransactionItem = ({item}) => {
             }}
             onPress={() => requestAnimationFrame(() => {
                 navigation.navigate('TransactionDetailsView', {
-                    transaction: item
+                    transactionId: item._id,
+                    currentUser: currentUser
                 })
             })}
         >
-            {item && creator ? (
+            {item && currentUser && creator ? (
                 <>
                     <View
                         style={{

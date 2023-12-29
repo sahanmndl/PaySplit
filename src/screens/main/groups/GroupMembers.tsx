@@ -7,12 +7,12 @@ import ItemSeparator from "../../../components/list-items/ItemSeparator";
 import MemberItem from "../../../components/list-items/MemberItem";
 import Colors from "../../../utils/Colors";
 import {Feather} from "@expo/vector-icons";
-import {useCurrentUserStore} from "../../../store";
 import {FlashList} from "@shopify/flash-list";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const GroupMembers = () => {
 
-    let {currentUser} = useCurrentUserStore()
+    const [currentUser, setCurrentUser] = useState(null)
 
     const route = useRoute()
     const focused = useIsFocused()
@@ -34,6 +34,7 @@ const GroupMembers = () => {
 
     const fetchGroupMembers = async () => {
         try {
+            setCurrentUser(JSON.parse(await AsyncStorage.getItem('user')))
             setLoading(true)
             await axios.post(`http://${BASE_API_URL}:8008/api/group/groupDetails`, {groupId: groupId})
                 .then(async (response) => {

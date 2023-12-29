@@ -3,14 +3,15 @@ import {ActivityIndicator, SafeAreaView} from "react-native";
 import {useIsFocused, useRoute} from "@react-navigation/core";
 import axios from "axios";
 import {BASE_API_URL} from "../../../utils/Constants";
-import {useCurrentUserStore} from "../../../store";
 import Colors from "../../../utils/Colors";
 import {FlashList} from "@shopify/flash-list";
 import TransactionItem from "../../../components/list-items/TransactionItem";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const GroupTransactions = () => {
 
-    let {currentUser} = useCurrentUserStore()
+    //let {currentUser} = useCurrentUserStore()
+    let currentUser = null
 
     const route = useRoute()
     const focused = useIsFocused()
@@ -21,6 +22,7 @@ const GroupTransactions = () => {
 
     const fetchTransactionDetails = async (transactionId: String) => {
         try {
+            currentUser = JSON.parse(await AsyncStorage.getItem('user'))
             const response = await axios.post(`http://${BASE_API_URL}:8008/api/group/transactionDetails`, {
                 transactionId: transactionId,
                 userId: currentUser._id
@@ -52,7 +54,7 @@ const GroupTransactions = () => {
     }
 
     useEffect(() => {
-        fetchGroupTransactions()
+        focused && fetchGroupTransactions()
     }, [focused])
 
     return (
