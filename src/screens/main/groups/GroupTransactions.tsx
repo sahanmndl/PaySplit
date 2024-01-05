@@ -37,6 +37,7 @@ const GroupTransactions = () => {
     const fetchGroupTransactions = async () => {
         try {
             setLoading(true)
+            currentUser = JSON.parse(await AsyncStorage.getItem('user'))
             await axios.post(`http://${BASE_API_URL}:8008/api/group/groupDetails`, {groupId: groupId})
                 .then(async (response) => {
                     const groupTransactionsPromises = response.data.group.transactionHistory.map(async (transactionId: String) => {

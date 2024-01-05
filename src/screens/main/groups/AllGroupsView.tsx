@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {ActivityIndicator, SafeAreaView, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Text, TouchableOpacity, View} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import GroupItem from "../../../components/list-items/GroupItem";
@@ -10,10 +10,12 @@ import {ParamListBase, useIsFocused, useNavigation} from "@react-navigation/core
 import {StackNavigationProp} from "@react-navigation/stack";
 import {FlashList} from "@shopify/flash-list";
 import Colors from "../../../utils/Colors";
+import {useSafeAreaInsets} from "react-native-safe-area-context";
 
 const AllGroupsView = () => {
 
     const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
+    const insets = useSafeAreaInsets()
     const focused = useIsFocused()
     const [refresh, setRefresh] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -60,13 +62,12 @@ const AllGroupsView = () => {
     }, [focused])
 
     return (
-        <SafeAreaView style={{display: 'flex', flex: 1}}>
+        <View
+            style={{display: 'flex', flex: 1, paddingTop: insets.top, flexDirection: 'column', paddingHorizontal: 14}}>
             <View style={{
-                flex: 0.1,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingHorizontal: 14
+                alignItems: 'center'
             }}>
                 <Text style={{fontSize: 28, fontWeight: '700', color: 'white'}}>
                     Groups
@@ -75,27 +76,26 @@ const AllGroupsView = () => {
                     <Entypo name="dots-three-horizontal" size={20} color="white"/>
                 </TouchableOpacity>
             </View>
-            <View style={{flex: 0.9, paddingHorizontal: 14, marginTop: 10}}>
-                {loading ? (
-                    <ActivityIndicator size={'small'} color={Colors.NIGHT_GREEN}/>
-                ) : (
-                    <FlashList
-                        data={groups}
-                        estimatedItemSize={75}
-                        keyExtractor={({_id}) => _id}
-                        refreshing={refresh}
-                        onRefresh={onRefresh}
-                        showsVerticalScrollIndicator={false}
-                        //ListEmptyComponent={NoResults}
-                        ItemSeparatorComponent={ItemSeparator}
-                        removeClippedSubviews={false}
-                        renderItem={({item}) => (
-                            <GroupItem item={item}/>
-                        )}
-                    />
-                )}
-            </View>
-        </SafeAreaView>
+            <View style={{height: 14}}/>
+            {loading ? (
+                <ActivityIndicator size={'small'} color={Colors.NIGHT_GREEN}/>
+            ) : (
+                <FlashList
+                    data={groups}
+                    estimatedItemSize={75}
+                    keyExtractor={({_id}) => _id}
+                    refreshing={refresh}
+                    onRefresh={onRefresh}
+                    showsVerticalScrollIndicator={false}
+                    //ListEmptyComponent={NoResults}
+                    ItemSeparatorComponent={ItemSeparator}
+                    removeClippedSubviews={false}
+                    renderItem={({item}) => (
+                        <GroupItem item={item}/>
+                    )}
+                />
+            )}
+        </View>
     )
 }
 

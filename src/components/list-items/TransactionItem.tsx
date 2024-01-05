@@ -9,9 +9,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TransactionItem = ({item}) => {
 
-    const [currentUser, setCurrentUser] = useState(null)
-
     const navigation = useNavigation()
+    const [currentUser, setCurrentUser] = useState(null)
     const [participantNames, setParticipantNames] = useState([])
     const [userIsParticipant, setUserIsParticipant] = useState(false)
     const [creator, setCreator] = useState(null)
@@ -50,13 +49,15 @@ const TransactionItem = ({item}) => {
         fetchParticipantDetails() && fetchUserDetails(item.creatorId)
     }, [])
 
+    console.log("item", item, "user", currentUser, "creator: ", creator)
+
     return (
         <TouchableOpacity
             style={{
                 width: '100%',
                 minHeight: 128,
                 backgroundColor: Colors.DARK,
-                marginBottom: 24,
+                marginBottom: 14,
                 borderRadius: 8,
                 elevation: 4,
                 display: 'flex',
@@ -123,7 +124,7 @@ const TransactionItem = ({item}) => {
                             {participantNames.join(', ')}
                         </Text>
                     </ViewMoreText>
-                    {userIsParticipant ? (
+                    {item.participants.some((p) => p.userId === currentUser._id) ? (
                         <Text style={{fontWeight: '400', color: Colors.NIGHT_GREEN, fontSize: 15, marginTop: 14}}>
                             You are included in this bill
                         </Text>
