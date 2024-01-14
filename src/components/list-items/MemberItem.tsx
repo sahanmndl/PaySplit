@@ -8,7 +8,7 @@ const MemberItem = ({item}) => {
         <TouchableOpacity style={{borderRadius: 8, elevation: 4, minHeight: 75}}>
             <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
                 <View style={{flex: 0.15, alignItems: 'center', justifyContent: 'center'}}>
-                    <UserAvatar size={45} name={item.name} bgColors={['#ffffff', '#606060', '#ef78b4']}/>
+                    <UserAvatar size={45} name={item ? item.name : ""} bgColors={['#ffffff', '#606060', '#ef78b4']}/>
                 </View>
                 <View style={{
                     display: 'flex',
@@ -19,7 +19,7 @@ const MemberItem = ({item}) => {
                     alignItems: 'center',
                 }}>
                     <Text style={{color: 'white', fontWeight: '600', fontSize: 17}}>
-                        {item.name}
+                        {item ? item.name : "Loading..."}
                     </Text>
                 </View>
             </View>

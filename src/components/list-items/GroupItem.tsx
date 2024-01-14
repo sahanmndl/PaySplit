@@ -2,11 +2,12 @@ import React from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {FontAwesome} from "@expo/vector-icons";
 import Colors from "../../utils/Colors";
-import {useNavigation} from "@react-navigation/core";
+import {ParamListBase, useNavigation} from "@react-navigation/core";
+import {StackNavigationProp} from "@react-navigation/stack";
 
 const GroupItem = ({item}) => {
 
-    const navigation = useNavigation()
+    const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
 
     return (
         <TouchableOpacity
@@ -23,7 +24,7 @@ const GroupItem = ({item}) => {
                 </View>
                 <View style={{flex: 0.9, paddingStart: 15, justifyContent: 'center'}}>
                     <Text style={{color: 'white', fontWeight: '600', fontSize: 17}}>
-                        {item.name}
+                        {item ? item.name : "Loading..."}
                     </Text>
                 </View>
             </View>

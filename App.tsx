@@ -7,12 +7,9 @@ import {useEffect, useState} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainRoute from "./src/routes/MainRoute";
 import {PaperProvider} from "react-native-paper";
-import {useCurrentUserStore} from "./src/store";
 import ToastManager from "toastify-react-native";
 
 export default function App() {
-
-    const {currentUser, setCurrentUser} = useCurrentUserStore()
 
     const [user, setUser] = useState(null)
 
@@ -20,7 +17,6 @@ export default function App() {
         try {
             const user = JSON.parse(await AsyncStorage.getItem('user'))
             setUser(user)
-            setCurrentUser(user)
         } catch (e) {
             Alert.alert("Error!", e.message)
         }

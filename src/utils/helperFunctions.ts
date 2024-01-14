@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {Alert} from "react-native";
 
 export const fetchCurrentUser = async () => {
     try {
@@ -7,4 +8,22 @@ export const fetchCurrentUser = async () => {
     } catch (e) {
         return null
     }
+}
+
+export const logoutAlert = ({handleFunction}) => {
+    Alert.alert(
+        "Confirmation", "Do you want to delete this bill?",
+        [
+            {
+                text: 'Cancel',
+                onPress: () => console.log("Cancel"),
+                style: "cancel",
+            },
+            {
+                text: 'Yes',
+                onPress: handleFunction
+            }
+        ],
+        {cancelable: true}
+    )
 }

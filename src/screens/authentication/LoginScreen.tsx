@@ -2,17 +2,15 @@ import React, {useState} from "react";
 import {ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TextInput} from "react-native-paper";
 import Colors from "../../utils/Colors";
-import {useNavigation} from "@react-navigation/core";
+import {ParamListBase, useNavigation} from "@react-navigation/core";
 import axios from "axios/index";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {BASE_API_URL} from "../../utils/Constants";
-import {useCurrentUserStore} from "../../store";
+import {StackNavigationProp} from "@react-navigation/stack";
 
 const LoginScreen = () => {
 
-    const {currentUser, setCurrentUser} = useCurrentUserStore()
-
-    const navigation = useNavigation()
+    const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
@@ -32,16 +30,18 @@ const LoginScreen = () => {
                 await axios.post(`http://${BASE_API_URL}:8008/api/user/login`, requestBody)
                     .then(async (response) => {
                         await AsyncStorage.setItem('user', JSON.stringify(response.data.user))
-                        setCurrentUser(response.data.user)
                         navigation.reset({
                             index: 0,
                             routes: [{name: 'MainRoute'}]
                         })
                     })
-                    .catch((e) => console.error("error: ", e.response))
+                    .catch((e) => {
+                        console.error("Login error: ", e)
+                        Alert.alert("Error!", "Cannot sign in")
+                    })
             } catch (e) {
-                console.error("Register error: ", e)
-                Alert.alert("Error!", "Cannot sign up")
+                console.error("Login error: ", e)
+                Alert.alert("Error!", "Cannot sign in")
             } finally {
                 setLoading(false)
             }

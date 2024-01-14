@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Colors from "../../../utils/Colors";
 import {FlashList} from "@shopify/flash-list";
 import TransactionItem from "../../../components/list-items/TransactionItem";
+import NoResultsView from "../../../components/list-items/NoResultsView";
 
 const PendingTransactionsView = () => {
 
@@ -62,8 +63,8 @@ const PendingTransactionsView = () => {
 
 
     return (
-        <View style={{display: 'flex', flex: 1, paddingTop: insets.top, paddingHorizontal: 14}}>
-            <Text style={{fontSize: 28, fontWeight: '700', color: 'white', paddingVertical: 14, alignItems: 'center'}}>
+        <View style={{display: 'flex', flex: 1, paddingTop: insets.top, paddingHorizontal: 10}}>
+            <Text style={{fontSize: 28, fontWeight: '700', color: 'white', paddingVertical: 15, alignItems: 'center'}}>
                 Pending Payments
             </Text>
             {loading ? (
@@ -76,7 +77,7 @@ const PendingTransactionsView = () => {
                     refreshing={refresh}
                     onRefresh={onRefresh}
                     showsVerticalScrollIndicator={false}
-                    //ListEmptyComponent={NoResults}
+                    ListEmptyComponent={<NoResultsView type={1}/>}
                     removeClippedSubviews={false}
                     renderItem={({item}) => (
                         <TransactionItem item={item}/>

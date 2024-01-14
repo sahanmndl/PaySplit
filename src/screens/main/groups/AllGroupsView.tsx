@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {ActivityIndicator, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Alert, Text, TouchableOpacity, View} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import GroupItem from "../../../components/list-items/GroupItem";
@@ -11,6 +11,7 @@ import {StackNavigationProp} from "@react-navigation/stack";
 import {FlashList} from "@shopify/flash-list";
 import Colors from "../../../utils/Colors";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
+import NoResultsView from "../../../components/list-items/NoResultsView";
 
 const AllGroupsView = () => {
 
@@ -43,9 +44,13 @@ const AllGroupsView = () => {
                     const groupDetails = await Promise.all(groupDetailsPromises)
                     setGroups(groupDetails.filter((group) => group !== null))
                 })
-                .catch((e) => console.error(e))
+                .catch((e) => {
+                    console.error(e)
+                    Alert.alert("Error!", "Unable to fetch data. Please try again!")
+                })
         } catch (e) {
             console.error(e)
+            Alert.alert("Error!", "Unable to fetch data. Please try again!")
         } finally {
             setLoading(false)
             setRefresh(false)
@@ -62,8 +67,7 @@ const AllGroupsView = () => {
     }, [focused])
 
     return (
-        <View
-            style={{display: 'flex', flex: 1, paddingTop: insets.top, flexDirection: 'column', paddingHorizontal: 14}}>
+        <View style={{display: 'flex', flex: 1, paddingTop: insets.top, flexDirection: 'column', paddingHorizontal: 14}}>
             <View style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -87,7 +91,7 @@ const AllGroupsView = () => {
                     refreshing={refresh}
                     onRefresh={onRefresh}
                     showsVerticalScrollIndicator={false}
-                    //ListEmptyComponent={NoResults}
+                    ListEmptyComponent={<NoResultsView type={2}/>}
                     ItemSeparatorComponent={ItemSeparator}
                     removeClippedSubviews={false}
                     renderItem={({item}) => (

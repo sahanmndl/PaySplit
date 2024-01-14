@@ -4,15 +4,16 @@ import Colors from "../../utils/Colors";
 import axios from "axios";
 import {BASE_API_URL} from "../../utils/Constants";
 import ViewMoreText from 'react-native-view-more-text';
-import {useNavigation} from "@react-navigation/core";
+import {ParamListBase, useNavigation} from "@react-navigation/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {StackNavigationProp} from "@react-navigation/stack";
 
 const TransactionItem = ({item}) => {
 
-    const navigation = useNavigation()
+    const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
     const [currentUser, setCurrentUser] = useState(null)
+    const [group, setGroup] = useState(null)
     const [participantNames, setParticipantNames] = useState([])
-    const [userIsParticipant, setUserIsParticipant] = useState(false)
     const [creator, setCreator] = useState(null)
 
     const renderViewMore = (onPress) => <Text style={{color: Colors.BLUE}} onPress={onPress}>View more</Text>;
@@ -32,6 +33,17 @@ const TransactionItem = ({item}) => {
         }
     }
 
+    const fetchGroupDetails = async (groupId: String) => {
+        try {
+            await axios.post(`http://${BASE_API_URL}:8008/api/group/groupDetails`, {groupId: groupId})
+                .then((response) => setGroup(response.data.group))
+                .catch((e) => console.error(e))
+        } catch (e) {
+            console.error(e)
+            return null
+        }
+    }
+
     const fetchParticipantDetails = async () => {
         setCurrentUser(JSON.parse(await AsyncStorage.getItem('user')))
         const participantDetailsPromises = item.participants.map(async (participant) => {
@@ -40,16 +52,11 @@ const TransactionItem = ({item}) => {
         })
         const participantNames = await Promise.all(participantDetailsPromises)
         setParticipantNames(participantNames)
-
-        const isParticipant = item.participants.some((p) => p.userId === currentUser._id)
-        setUserIsParticipant(isParticipant)
     }
 
     useEffect(() => {
-        fetchParticipantDetails() && fetchUserDetails(item.creatorId)
+        fetchParticipantDetails() && fetchUserDetails(item.creatorId) && fetchGroupDetails(item.groupId)
     }, [])
-
-    console.log("item", item, "user", currentUser, "creator: ", creator)
 
     return (
         <TouchableOpacity
@@ -110,6 +117,14 @@ const TransactionItem = ({item}) => {
                         </Text>
                         <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>
                             {new Date(item.createdAt).toDateString()}
+                        </Text>
+                    </View>
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 10}}>
+                        <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>
+                            Group:{" "}
+                        </Text>
+                        <Text style={{fontWeight: '500', color: 'white', fontSize: 15}}>
+                            {group ? group.name : ""}
                         </Text>
                     </View>
                     <Text style={{fontWeight: '300', color: 'white', fontSize: 15}}>

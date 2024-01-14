@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useNavigation, useRoute} from "@react-navigation/core";
+import {ParamListBase, useNavigation, useRoute} from "@react-navigation/core";
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import ItemSeparator from "../../../components/list-items/ItemSeparator";
@@ -8,16 +8,19 @@ import {Ionicons} from "@expo/vector-icons";
 import Colors from "../../../utils/Colors";
 import TextButton from "../../../components/buttons/TextButton";
 import {TextInput} from "react-native-paper";
+import {StackNavigationProp} from "@react-navigation/stack";
+import NoResultsView from "../../../components/list-items/NoResultsView";
 
 const SelectMembersView = () => {
 
     const route = useRoute()
     const insets = useSafeAreaInsets()
-    const navigation = useNavigation()
+    const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
+
     const [selectedMembers, setSelectedMembers] = useState([])
     const [totalAmount, setTotalAmount] = useState("")
 
-    const {allMembers, groupId} = route?.params || {allMembers: []}
+    const {allMembers, groupId} = route?.params || {allMembers: [], groupId: ""}
 
     return (
         <View style={{display: 'flex', flex: 1, paddingTop: insets.top}}>
@@ -75,7 +78,7 @@ const SelectMembersView = () => {
                 data={allMembers}
                 keyExtractor={({_id}) => _id}
                 showsVerticalScrollIndicator={false}
-                //ListEmptyComponent={NoResults}
+                ListEmptyComponent={<NoResultsView type={3}/>}
                 ItemSeparatorComponent={ItemSeparator}
                 initialNumToRender={75}
                 removeClippedSubviews={false}

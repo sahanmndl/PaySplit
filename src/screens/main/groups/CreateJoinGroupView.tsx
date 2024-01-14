@@ -38,7 +38,7 @@ const CreateJoinGroupView = () => {
                     })
             } catch (e) {
                 console.error(e)
-                Alert.alert("Error!", "Cannot create new group")
+                Alert.alert("Error!", e.response.data.message)
             } finally {
                 setCreateLoading(false)
             }
@@ -67,7 +67,7 @@ const CreateJoinGroupView = () => {
                     })
             } catch (e) {
                 console.error(e)
-                Alert.alert("Error!", "Cannot join group")
+                Alert.alert("Error!", e.response.data.message)
             } finally {
                 setJoinLoading(false)
             }
@@ -79,7 +79,6 @@ const CreateJoinGroupView = () => {
             contentContainerStyle={{
                 flex: 1,
                 alignItems: 'center',
-                justifyContent: 'center',
                 padding: 14
             }}
             keyboardShouldPersistTaps={'never'}
@@ -107,7 +106,7 @@ const CreateJoinGroupView = () => {
                     : <Text style={styles.btnText}>Create a new group</Text>
                 }
             </TouchableOpacity>
-            <View style={{height: 100}}/>
+            <View style={{height: 50}}/>
             <TextInput
                 style={styles.textInput}
                 mode='outlined'
@@ -148,7 +147,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: Colors.TEAL,
-        borderRadius: 50,
+        borderRadius: 4,
         elevation: 4,
         marginTop: 30
     },

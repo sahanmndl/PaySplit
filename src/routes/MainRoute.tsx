@@ -53,10 +53,30 @@ function GroupsStack() {
     )
 }
 
+function PendingTransactionsStack() {
+    const route = useRoute()
+    return (
+        <Stack.Navigator initialRouteName="PendingTransactionsView">
+            <Stack.Screen
+                name="PendingTransactionsView"
+                component={PendingTransactionsView}
+                initialParams={route.params}
+                options={{headerShown: false, headerBackTitleVisible: false, headerTintColor: Colors.TEAL}}
+            />
+            <Stack.Screen
+                name="TransactionDetailsView"
+                component={TransactionDetailsView}
+                initialParams={route.params}
+                options={{headerTitle: "", headerBackTitleVisible: false, headerTintColor: Colors.TEAL}}
+            />
+        </Stack.Navigator>
+    )
+}
+
 function BottomTabsNav() {
     return (
         <BottomTabs.Navigator
-            initialRouteName={"PendingTransactionsView"}
+            initialRouteName={"PendingTransactionsStack"}
             screenOptions={{
                 headerShown: false,
                 tabBarShowLabel: false,
@@ -67,8 +87,8 @@ function BottomTabsNav() {
             }}
         >
             <BottomTabs.Screen
-                name={"PendingTransactionsView"}
-                component={PendingTransactionsView}
+                name={"PendingTransactionsStack"}
+                component={PendingTransactionsStack}
                 options={{
                     tabBarIcon: ({color}) => (
                         <MaterialIcons name="pending" color={color} size={30}/>

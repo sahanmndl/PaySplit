@@ -1,25 +1,27 @@
 import React, {useState} from "react";
 import {ActivityIndicator, Alert, FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
-import {useNavigation, useRoute} from "@react-navigation/core";
+import {ParamListBase, useNavigation, useRoute} from "@react-navigation/core";
 import ItemSeparator from "../../../components/list-items/ItemSeparator";
 import TransactionMemberItem from "../../../components/list-items/TransactionMemberItem";
 import {Ionicons} from "@expo/vector-icons";
 import Colors from "../../../utils/Colors";
 import TextButton from "../../../components/buttons/TextButton";
 import {TextInput} from "react-native-paper";
-import {useCurrentUserStore} from "../../../store";
 import axios from "axios";
 import {BASE_API_URL} from "../../../utils/Constants";
 import {Toast} from "toastify-react-native";
+import {StackNavigationProp} from "@react-navigation/stack";
+import NoResultsView from "../../../components/list-items/NoResultsView";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateTransactionView = () => {
 
-    let {currentUser} = useCurrentUserStore()
+    let currentUser = null
 
-    const insets = useSafeAreaInsets()
     const route = useRoute()
-    const navigation = useNavigation()
+    const insets = useSafeAreaInsets()
+    const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
 
     let {selectedMembers, totalAmount, groupId} = route.params
     totalAmount = parseFloat(totalAmount)
@@ -46,6 +48,7 @@ const CreateTransactionView = () => {
             Alert.alert("Error!", "Sum of participant amounts cannot be greater than total amount");
         } else {
             try {
+                currentUser = JSON.parse(await AsyncStorage.getItem('user'))
                 setLoading(true)
                 const requestBody = {
                     creatorId: currentUser._id,
@@ -54,7 +57,6 @@ const CreateTransactionView = () => {
                     totalAmount: totalAmount,
                     participants: participants
                 }
-                console.log(requestBody)
                 await axios.post(`http://${BASE_API_URL}:8008/api/group/createTransaction`, requestBody)
                     .then((response) => {
                         console.log("SUCCESS CREATE TRANSACTION: ", response.data)
@@ -62,12 +64,12 @@ const CreateTransactionView = () => {
                         navigation.goBack()
                     })
                     .catch((e) => {
-                        console.error("ERROR CREATE TRANSACTION: ", e.response.message)
-                        Alert.alert("Error!", "Couldn't process query! Please try again");
+                        console.error("ERROR CREATE TRANSACTION: ", e.response.data.message)
+                        Alert.alert("Error!", e.response.data.message);
                     })
             } catch (e) {
                 console.error("ERROR CREATE TRANSACTION: ", e.message)
-                Alert.alert("Error!", "Couldn't process query! Please try again");
+                Alert.alert("Error!", e.response.data.message);
             } finally {
                 setLoading(false)
             }
@@ -145,7 +147,7 @@ const CreateTransactionView = () => {
                 data={selectedMembers}
                 keyExtractor={({_id}) => _id}
                 showsVerticalScrollIndicator={false}
-                //ListEmptyComponent={NoResults}
+                ListEmptyComponent={<NoResultsView type={3}/>}
                 ItemSeparatorComponent={ItemSeparator}
                 initialNumToRender={20}
                 removeClippedSubviews={false}

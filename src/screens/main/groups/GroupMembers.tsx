@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {ActivityIndicator, SafeAreaView, StyleSheet, TouchableOpacity} from "react-native";
-import {useIsFocused, useNavigation, useRoute} from "@react-navigation/core";
+import {ActivityIndicator, Alert, SafeAreaView, StyleSheet, TouchableOpacity} from "react-native";
+import {ParamListBase, useIsFocused, useNavigation, useRoute} from "@react-navigation/core";
 import axios from "axios";
 import {BASE_API_URL} from "../../../utils/Constants";
 import ItemSeparator from "../../../components/list-items/ItemSeparator";
@@ -9,14 +9,16 @@ import Colors from "../../../utils/Colors";
 import {Feather} from "@expo/vector-icons";
 import {FlashList} from "@shopify/flash-list";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {StackNavigationProp} from "@react-navigation/stack";
+import NoResultsView from "../../../components/list-items/NoResultsView";
 
 const GroupMembers = () => {
 
-    const [currentUser, setCurrentUser] = useState(null)
-
     const route = useRoute()
     const focused = useIsFocused()
-    const navigation = useNavigation()
+    const navigation = useNavigation<StackNavigationProp<ParamListBase>>()
+
+    const [currentUser, setCurrentUser] = useState(null)
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [members, setMembers] = useState([])
@@ -44,9 +46,13 @@ const GroupMembers = () => {
                     const memberDetails = await Promise.all(groupMembersPromises)
                     setMembers(memberDetails)
                 })
-                .catch((e) => console.error(e))
+                .catch((e) => {
+                    console.error("GROUP MEMBERS ERROR: ", e.response.data.message)
+                    Alert.alert("Error!", e.response.data.message)
+                })
         } catch (e) {
-            console.error(e)
+            console.error("GROUP MEMBERS ERROR: ", e.response.data.message)
+            Alert.alert("Error!", e.response.data.message)
         } finally {
             setRefresh(false)
             setLoading(false)
@@ -76,7 +82,7 @@ const GroupMembers = () => {
                     refreshing={refresh}
                     onRefresh={onRefresh}
                     showsVerticalScrollIndicator={false}
-                    //ListEmptyComponent={NoResults}
+                    ListEmptyComponent={<NoResultsView type={3}/>}
                     ItemSeparatorComponent={ItemSeparator}
                     removeClippedSubviews={false}
                     renderItem={({item}) => (

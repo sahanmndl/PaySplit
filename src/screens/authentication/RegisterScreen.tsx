@@ -21,7 +21,7 @@ const RegisterScreen = () => {
         if (name.trim() === "" || email.trim() === "" || password.trim() === "" || confirmPassword.trim() === "") {
             Alert.alert("Input is empty", "Please enter correct details!")
         } else if (password.trim().length < 8 || confirmPassword.trim().length < 8) {
-            Alert.alert("Invalid password", "Password must be atleast 8 characters!")
+            Alert.alert("Invalid password", "Password must be at least 8 characters!")
         } else if (password.trim() !== confirmPassword.trim()) {
             Alert.alert("Passwords don't match")
         } else {
@@ -40,7 +40,10 @@ const RegisterScreen = () => {
                             routes: [{name: 'MainRoute'}]
                         })
                     })
-                    .catch((e) => console.error(e))
+                    .catch((e) => {
+                        console.error("Register error: ", e)
+                        Alert.alert("Error!", "Cannot sign up")
+                    })
             } catch (e) {
                 console.error("Register error: ", e)
                 Alert.alert("Error!", "Cannot sign up")

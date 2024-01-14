@@ -10,7 +10,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const GroupTransactions = () => {
 
-    //let {currentUser} = useCurrentUserStore()
     let currentUser = null
 
     const route = useRoute()
