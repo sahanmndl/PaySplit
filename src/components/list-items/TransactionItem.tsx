@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import Colors from "../../utils/Colors";
 import axios from "axios";
-import {BASE_API_URL} from "../../utils/Constants";
+import {BASE_API_URL, ON_LOAD} from "../../utils/Constants";
 import ViewMoreText from 'react-native-view-more-text';
 import {ParamListBase, useNavigation} from "@react-navigation/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,7 +21,11 @@ const TransactionItem = ({item}) => {
 
     const fetchUserDetails = async (userId: String) => {
         try {
-            const response = await axios.post(`http://${BASE_API_URL}:8008/api/user/userDetails`, {userId: userId})
+            const requestBody = {
+                userId: userId,
+                getType: ON_LOAD
+            }
+            const response = await axios.post(`http://${BASE_API_URL}:8008/api/user/userDetails`, requestBody)
             if (userId === item.creatorId) {
                 setCreator(response.data.user)
             } else {

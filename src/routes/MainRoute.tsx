@@ -119,7 +119,7 @@ function BottomTabsNav() {
 
 function MainRoute() {
     return (
-        <Stack.Navigator initialRouteName="BottomTabsNav">
+        <Stack.Navigator initialRouteName="BottomTabsNav" screenOptions={{headerShown: false}}>
             <Stack.Screen
                 name="BottomTabsNav"
                 component={BottomTabsNav}

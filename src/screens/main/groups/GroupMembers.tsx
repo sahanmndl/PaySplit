@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {ActivityIndicator, Alert, SafeAreaView, StyleSheet, TouchableOpacity} from "react-native";
 import {ParamListBase, useIsFocused, useNavigation, useRoute} from "@react-navigation/core";
 import axios from "axios";
-import {BASE_API_URL} from "../../../utils/Constants";
+import {BASE_API_URL, ON_LOAD, ON_REFRESH} from "../../../utils/Constants";
 import ItemSeparator from "../../../components/list-items/ItemSeparator";
 import MemberItem from "../../../components/list-items/MemberItem";
 import Colors from "../../../utils/Colors";
@@ -25,27 +25,16 @@ const GroupMembers = () => {
 
     const {groupId} = route.params
 
-    const fetchUserDetails = async (userId: String) => {
-        try {
-            const response = await axios.post(`http://${BASE_API_URL}:8008/api/user/userDetails`, {userId: userId})
-            return response.data.user
-        } catch (e) {
-            console.error(e)
-        }
-    }
-
-    const fetchGroupMembers = async () => {
+    const fetchGroupMembers = async (getType: String) => {
         try {
             setCurrentUser(JSON.parse(await AsyncStorage.getItem('user')))
             setLoading(true)
-            await axios.post(`http://${BASE_API_URL}:8008/api/group/groupDetails`, {groupId: groupId})
-                .then(async (response) => {
-                    const groupMembersPromises = response.data.group.members.map(async (userId: String) => {
-                        return await fetchUserDetails(userId)
-                    })
-                    const memberDetails = await Promise.all(groupMembersPromises)
-                    setMembers(memberDetails)
-                })
+            const requestBody = {
+                groupId: groupId,
+                getType: getType
+            }
+            await axios.post(`http://${BASE_API_URL}:8008/api/group/groupMemberDetails`, requestBody)
+                .then((response) => setMembers(response.data.members))
                 .catch((e) => {
                     console.error("GROUP MEMBERS ERROR: ", e.response.data.message)
                     Alert.alert("Error!", e.response.data.message)
@@ -61,11 +50,11 @@ const GroupMembers = () => {
 
     const onRefresh = () => {
         setRefresh(true)
-        fetchGroupMembers()
+        fetchGroupMembers(ON_REFRESH)
     }
 
     useEffect(() => {
-        focused && fetchGroupMembers()
+        focused && fetchGroupMembers(ON_LOAD)
     }, [focused])
 
     const filteredMembers = members.filter((member) => member._id !== currentUser._id)

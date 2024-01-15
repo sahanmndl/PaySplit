@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {ActivityIndicator, Text, View} from "react-native";
 import {useSafeAreaInsets} from "react-native-safe-area-context";
 import axios from "axios";
-import {BASE_API_URL} from "../../../utils/Constants";
+import {BASE_API_URL, ON_LOAD, ON_REFRESH} from "../../../utils/Constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Colors from "../../../utils/Colors";
 import {FlashList} from "@shopify/flash-list";
@@ -17,32 +17,16 @@ const PendingTransactionsView = () => {
     const [refresh, setRefresh] = useState(false)
     const [pendingTransactions, setPendingTransactions] = useState([])
 
-    const fetchTransactionDetails = async (transactionId: String) => {
-        try {
-            currentUser = JSON.parse(await AsyncStorage.getItem('user'))
-            const response = await axios.post(`http://${BASE_API_URL}:8008/api/group/transactionDetails`, {
-                transactionId: transactionId,
-                userId: currentUser._id
-            })
-            return response.data.transaction
-        } catch (e) {
-            console.error(e)
-            return null
-        }
-    }
-
-    const fetchUserPendingTransactions = async () => {
+    const fetchUserPendingTransactions = async (getType: String) => {
         try {
             setLoading(true)
             currentUser = JSON.parse(await AsyncStorage.getItem('user'))
-            await axios.post(`http://${BASE_API_URL}:8008/api/user/userDetails`, {userId: currentUser._id})
-                .then(async (response) => {
-                    const pendingTransactionPromises = response.data.user.pendingTransactions.map(async (transactionId: String) => {
-                        return await fetchTransactionDetails(transactionId)
-                    })
-                    const transactionDetails = await Promise.all(pendingTransactionPromises)
-                    setPendingTransactions(transactionDetails)
-                })
+            const requestBody = {
+                userId: currentUser._id,
+                getType: getType
+            }
+            await axios.post(`http://${BASE_API_URL}:8008/api/user/userPendingTransactions`, requestBody)
+                .then((response) => setPendingTransactions(response.data.pendingTransactions))
                 .catch((e) => console.error(e))
         } catch (e) {
             console.error(e)
@@ -54,13 +38,12 @@ const PendingTransactionsView = () => {
 
     const onRefresh = () => {
         setRefresh(true)
-        fetchUserPendingTransactions()
+        fetchUserPendingTransactions(ON_REFRESH)
     }
 
     useEffect(() => {
-        fetchUserPendingTransactions()
+        fetchUserPendingTransactions(ON_LOAD)
     }, [])
-
 
     return (
         <View style={{display: 'flex', flex: 1, paddingTop: insets.top, paddingHorizontal: 10}}>
